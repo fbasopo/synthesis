@@ -44,8 +44,9 @@ let digits s=
        | false -> count(i/10) + 1
    count s
 
-let minmax _ =
-    failwith "Not implemented"
+let minmax m=
+    let a,b,c,d = m
+    (min a b |> min c |> min d , max a b |> max c |> max d)
 
 let isLeap yr = match yr >= 1582 with
     |false -> failwith "Invalid Year "
@@ -70,7 +71,19 @@ let bizFuzz _ =
 let monthDay d y =
        match d < 366 & d >0 || y <1582 with
        |false  ->  failwith "Invalid Input"
-       |true -> 
+       //|true -> 
+
+let sqrt n=
+    let rec calculate guess i=
+       match i with 
+       | 10 -> guess
+       | _ ->
+         let g =(guess + n/guess)/ 2.0
+         calculate g (i + 1)
+    match n <=0.0 with
+       | true -> failwith "Impossibru!"
+       |_ ->
+        calculate(n/2.0) 0
 
 let coord _ =
     failwith "Not implemented"
