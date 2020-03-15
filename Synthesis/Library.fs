@@ -62,16 +62,47 @@ let month m = match m < 1 || m > 12 with
               |9-> ("September", 30) |10 -> ("October", 31) | 11-> ("November", 30) | 12 -> ("December", 31)
      
 
-let toBinary _ =
-    failwith "Not implemented"
+let toBinary c =
+    match (c<0,c=0) with
+       |true,_ -> failwith "Negative number"
+       |_,true -> "0"
+       |false,false ->
+            let rec getBinary c rem =       
+                 match c>0 with
+                       |false -> rem
+                       |true -> match c%2 with
+                                   |0 -> getBinary (c/2) ("0"+rem)
+                                   |_ -> getBinary (c/2) ("1"+rem)
+            getBinary c ""
 
-let bizFuzz _ =
-    failwith "Not implemented"
+let bizFuzz j =
+     let rec numbersBetween counter (a,b,c) =
+           match counter<=j with
+               |false -> a,b,c
+               |_ ->
+                   match counter%3=0,counter%5=0 with
+                       |true,true -> numbersBetween (counter+1) (a+1,b+1,c+1)
+                       |true,false -> numbersBetween (counter+1) (a+1,b,c)
+                       |false,true -> numbersBetween (counter+1) (a,b+1,c)
+                       |_,_ -> numbersBetween (counter+1) (a,b,c)
+     numbersBetween 3 (0,0,0)
 
 let monthDay d y =
-       match d < 366 & d >0 || y <1582 with
-       |false  ->  failwith "Invalid Input"
-       //|true -> 
+      let _ = 
+          match (isLeap y,(d >= 1 && d <= 365),d  >=1 && d <= 366) with
+              |true,_,false -> failwith "Negative Number"
+              |false,false,_ -> failwith "Negative Number"
+              |_,_,_-> ()
+          
+      let rec myMonth counter acc =
+          let month,numbdays =
+              match (counter=2) && ((isLeap y) = true) with
+                  |true -> "February", 29
+                  |_ -> month counter
+          match acc+numbdays >= d with
+              |true -> month
+              |_ -> myMonth (counter+1) (acc+numbdays)
+      myMonth 1 0
 
 let sqrt n=
     let rec calculate guess i=
@@ -85,5 +116,10 @@ let sqrt n=
        |_ ->
         calculate(n/2.0) 0
 
-let coord _ =
-    failwith "Not implemented"
+let coord(X, Y) =
+    let dist = fun(x2,y2) ->
+        let xx,yy = X-x2 , Y-y2
+        sqrt ((xx*xx)+(yy*yy))
+    let rect = fun( leftX,leftY) width height ->
+        (X >= leftX && X <= leftX+height) && (Y <= leftY && Y>= leftY-width)
+    (dist,rect)
